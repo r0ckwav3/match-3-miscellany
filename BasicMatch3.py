@@ -5,9 +5,10 @@ import pygame
 boardwidth = 10
 boardheight = 10
 
-# colors = [(255,255,255), (255,255,0), (255,0,255), (0,255,255), (255,0,0), (0,255,0), (0,0,255)]
+colors = [(255,255,255), (255,255,0), (255,0,255), (0,255,255), (255,0,0), (0,255,0), (0,0,255)]
 # less colors means more chain reactions
-colors = [(255,255,255), (255,255,0), (255,0,255), (0,255,255)]
+# colors = [(255,255,255), (255,255,0), (255,0,255), (0,255,255)]
+selectcolor = (128,128,128)
 
 board = [[None for j in range(boardwidth)] for k in range(boardheight)]
 
@@ -26,6 +27,7 @@ is_falling = [[False for j in range(boardwidth)] for k in range(boardheight)]
 # during the animation gamestate, everything is in the position it will eventually be in,
 # and anything that is falling is marked in is_falling
 
+prev_selected = None
 
 # pygame initialization/constants
 tilesize = 50
@@ -56,6 +58,7 @@ while flag:
             game_state = "Idle"
         else:
             game_state = "PreAnimating"
+            prev_selected = None
             fall_timer = 0
 
     elif game_state == "Animating" or game_state == "PreAnimating":
@@ -82,6 +85,22 @@ while flag:
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 flag = False
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 1:
+                tilepos = (event.pos[0]//tilesize, event.pos[1]//tilesize)
+                if game_state == "Idle":
+                    if prev_selected == None:
+                        prev_selected = tilepos
+                    else:
+                        eudist = abs(tilepos[0]-prev_selected[0]) + abs(tilepos[1]-prev_selected[1])
+                        if eudist == 1:
+                            temp = board[tilepos[1]][tilepos[0]]
+                            board[tilepos[1]][tilepos[0]] = board[prev_selected[1]][prev_selected[0]]
+                            board[prev_selected[1]][prev_selected[0]] = temp
+                            prev_selected = None
+                            game_state = "PreIdle"
+                        else:
+                            prev_selected = tilepos
     
     # match 3 logic
     if game_state == "PreIdle":
@@ -98,8 +117,6 @@ while flag:
                     to_remove.append((row,col))
                     to_remove.append((row+1,col))
                     to_remove.append((row+2,col))
-        
-        print("toremove: ", to_remove)
 
         for r,c in to_remove:
             board[r][c] = None
@@ -122,6 +139,19 @@ while flag:
 
     # draw the screen
     screen.fill((0,0,0))
+
+    if prev_selected is not None:
+        pygame.draw.ellipse(
+            screen,
+            selectcolor,
+            (
+                prev_selected[0]*tilesize,
+                prev_selected[1]*tilesize,
+                tilesize,
+                tilesize
+            )
+        )
+
     for row in range(boardheight):
         for col in range(boardwidth):
             if board[row][col] is not None:

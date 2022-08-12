@@ -211,12 +211,12 @@ while flag:
             r,c = to_remove.pop()
             if r >= 0 and r < boardheight and c >= 0 and c < boardwidth:
                 if board[r][c] is not None:
-                    # if board[r][c][1] == 1:
-                    #     for d in [(0,2),(0,1),(1,1)]:
-                    #         to_remove.append((r+d[0],c+d[1]))
-                    #         to_remove.append((r-d[1],c+d[0]))
-                    #         to_remove.append((r-d[0],c-d[1]))
-                    #         to_remove.append((r+d[1],c-d[0]))
+                    if board[r][c][1] == 1:
+                        for d in [(0,2),(0,1),(1,1)]:
+                            to_remove.append((r+d[0],c+d[1]))
+                            to_remove.append((r-d[1],c+d[0]))
+                            to_remove.append((r-d[0],c-d[1]))
+                            to_remove.append((r+d[1],c-d[0]))
                     board[r][c] = None
 
 

@@ -119,6 +119,7 @@ while flag:
     
     # match 3 logic
     if game_state == "PreIdle":
+        # TODO: recognise crosses
         # find match 3s
         to_remove = []
         for row in range(boardheight):
@@ -146,33 +147,65 @@ while flag:
                     # start a new one
                     currentcolor = board[row][col][0]
                     currentstreak = 1
+                col+=1
+                # end the streak
+                if currentstreak == 3:
+                    for i in range(1,currentstreak+1):
+                        to_remove.append((row,col-i))
+                elif currentstreak == 4:
+                    # TODO: spawn the powergem at the "creating gem"
+                    to_remove.append((row,col-1))
+                    to_remove.append((row,col-2))
+                    to_remove.append((row,col-4))
+                    board[row][col-3] = (currentcolor, 1)
+                elif currentstreak >= 5:
+                    for i in range(1,currentstreak+1):
+                        if i != 3: 
+                            to_remove.append((row,col-i))
+                    board[row][col-3] = (len(colors), 3)
 
         
-        # for col in range(boardwidth):
-        #     currentstreak = 0
-        #     currentcolor = -1
-        #     for row in range(boardheight):
-        #         if board[row][col][0] == currentcolor:
-        #             currentstreak+=1
-        #         else:
-        #             # end the streak
-        #             if currentstreak == 3:
-        #                 for i in range(1,currentstreak+1):
-        #                     to_remove.append((row,col-i))
-        #             elif currentstreak == 4:
-        #                 # TODO: spawn the powergem at the "creating gem"
-        #                 to_remove.append((row,col-1))
-        #                 to_remove.append((row,col-2))
-        #                 to_remove.append((row,col-4))
-        #                 board[row][col-3] = (currentcolor, 1)
-        #             elif currentstreak >= 5:
-        #                 for i in range(1,currentstreak+1):
-        #                     if i != 3: 
-        #                         to_remove.append((row,col-i))
-        #                 board[row][col-3] = (len(colors), 3)
-        #             # start a new one
-        #             currentcolor = board[row][col][0]
-        #             currentstreak = 1
+        for col in range(boardwidth):
+            currentstreak = 0
+            currentcolor = -1
+            for row in range(boardheight):
+                if board[row][col][0] == currentcolor:
+                    currentstreak+=1
+                else:
+                    # end the streak
+                    if currentstreak == 3:
+                        for i in range(1,currentstreak+1):
+                            to_remove.append((row-i,col))
+                    elif currentstreak == 4:
+                        # TODO: spawn the powergem at the "creating gem"
+                        to_remove.append((row-1,col))
+                        to_remove.append((row-2,col))
+                        to_remove.append((row-4,col))
+                        board[row-3][col] = (currentcolor, 1)
+                    elif currentstreak >= 5:
+                        for i in range(1,currentstreak+1):
+                            if i != 3: 
+                                to_remove.append((row-i,col))
+                        board[row-3][col] = (len(colors), 3)
+                    # start a new one
+                    currentcolor = board[row][col][0]
+                    currentstreak = 1
+                row+=1
+                # end the streak
+                if currentstreak == 3:
+                    for i in range(1,currentstreak+1):
+                        to_remove.append((row-i,col))
+                elif currentstreak == 4:
+                    # TODO: spawn the powergem at the "creating gem"
+                    to_remove.append((row-1,col))
+                    to_remove.append((row-2,col))
+                    to_remove.append((row-4,col))
+                    board[row-3][col] = (currentcolor, 1)
+                elif currentstreak >= 5:
+                    for i in range(1,currentstreak+1):
+                        if i != 3: 
+                            to_remove.append((row-i,col))
+                    board[row-3][col] = (len(colors), 3)
 
         for r,c in to_remove:
             board[r][c] = None

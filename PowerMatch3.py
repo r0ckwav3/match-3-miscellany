@@ -205,6 +205,11 @@ while flag:
                             to_remove.append((r-d[1],c+d[0]))
                             to_remove.append((r-d[0],c-d[1]))
                             to_remove.append((r+d[1],c-d[0]))
+                    if board[r][c][1] == 2:
+                        for r2 in range(boardheight):
+                            to_remove.append((r2,c))
+                        for c2 in range(boardwidth):
+                            to_remove.append((r,c2))
                     board[r][c] = None
         
         for r,c,color,t in to_place:

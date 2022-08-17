@@ -44,6 +44,8 @@ gem_anim_timer = 0
 # pygame initialization/constants
 tilesize = 50
 padding = 10
+spikesize = 10
+
 size = (boardwidth * tilesize, boardheight * tilesize)
 
 pygame.init()
@@ -245,23 +247,47 @@ while flag:
                 if board[row][col][0] == len(colors):
                     color = pygame.Color(0,0,0)
                     color.hsva = (360*gem_anim_timer/gem_anim_time,100,100,100)
-                elif board[row][col][1] == 0:
+                else:
                     color = colors[board[row][col][0]]
-                elif board[row][col][1] == 1:
-                    flux = math.sin(5*(2*math.pi*gem_anim_timer/gem_anim_time))
-                    mult = 0.8 + (0.2 * flux)
-                    color = pygame.Color(colors[board[row][col][0]])
-                    color.hsva = (color.hsva[0], color.hsva[1], color.hsva[2]*mult, color.hsva[3])
+                
+                spritecoords = [col*tilesize, row*tilesize]
+                if is_falling[row][col] and (game_state == "Animating" or game_state == "PreAnimating"):
+                    spritecoords[1] -= tilesize * (1-(fall_timer/fall_time))
 
-                do_fall_anim = is_falling[row][col] and (game_state == "Animating" or game_state == "PreAnimating")
-                pygame.draw.ellipse(
-                    screen,
-                    color,
-                    (
-                        col*tilesize + padding/2,
-                        row*tilesize + padding/2 - (tilesize*(1-(fall_timer/fall_time)) if do_fall_anim else 0),
-                        tilesize - padding,
-                        tilesize - padding
+                # normal gem or power crystal
+                if board[row][col][1] == 0 or board[row][col][1] == 3:
+                    pygame.draw.ellipse(
+                        screen,
+                        color,
+                        (
+                            spritecoords[0] + padding/2,
+                            spritecoords[1] + padding/2,
+                            tilesize - padding,
+                            tilesize - padding
+                        )
                     )
-                )
+                # bomb
+                elif board[row][col][1] == 1:
+                    pygame.draw.rect(
+                        screen,
+                        color,
+                        (
+                            spritecoords[0] + padding/2,
+                            spritecoords[1] + padding/2,
+                            tilesize - padding,
+                            tilesize - padding
+                        )
+                    )
+                # cross bomb
+                elif board[row][col][1] == 2:
+                    pygame.draw.polygon(
+                        screen,
+                        color,
+                        [
+                            (spritecoords[0] + tilesize/2, spritecoords[1] + padding/2),
+                            (spritecoords[0] + padding/2, spritecoords[1] + tilesize/2),
+                            (spritecoords[0] + tilesize/2, spritecoords[1] + tilesize - padding/2),
+                            (spritecoords[0] + tilesize - padding/2, spritecoords[1] + tilesize/2),
+                        ]
+                    )
     pygame.display.flip()

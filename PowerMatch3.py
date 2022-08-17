@@ -1,6 +1,7 @@
 import random
 import pygame
 import math
+import RegularNgon
 
 # includes the rewards you get from things like 4-in-a-rows.
 # to store this data, board carries tuples (color, type)
@@ -254,8 +255,8 @@ while flag:
                 if is_falling[row][col] and (game_state == "Animating" or game_state == "PreAnimating"):
                     spritecoords[1] -= tilesize * (1-(fall_timer/fall_time))
 
-                # normal gem or power crystal
-                if board[row][col][1] == 0 or board[row][col][1] == 3:
+                # normal gem
+                if board[row][col][1] == 0:
                     pygame.draw.ellipse(
                         screen,
                         color,
@@ -280,14 +281,21 @@ while flag:
                     )
                 # cross bomb
                 elif board[row][col][1] == 2:
-                    pygame.draw.polygon(
+                    RegularNgon.draw_ngon(
                         screen,
                         color,
-                        [
-                            (spritecoords[0] + tilesize/2, spritecoords[1] + padding/2),
-                            (spritecoords[0] + padding/2, spritecoords[1] + tilesize/2),
-                            (spritecoords[0] + tilesize/2, spritecoords[1] + tilesize - padding/2),
-                            (spritecoords[0] + tilesize - padding/2, spritecoords[1] + tilesize/2),
-                        ]
+                        (spritecoords[0] + tilesize/2, spritecoords[1] + tilesize/2),
+                        (tilesize-padding)/2,
+                        4
+                    )
+                # power crystal
+                elif board[row][col][1] == 3:
+                    RegularNgon.draw_ngon(
+                        screen,
+                        color,
+                        (spritecoords[0] + tilesize/2, spritecoords[1] + tilesize/2),
+                        (tilesize-padding)/2,
+                        4,
+                        (gem_anim_timer/gem_anim_time) * (4 * math.pi)
                     )
     pygame.display.flip()

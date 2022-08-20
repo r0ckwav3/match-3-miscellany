@@ -15,3 +15,18 @@ def draw_ngon(screen, color, center, radius, n, rot_offset=0):
         color,
         get_ngon_points(center, radius, n, rot_offset)
     )
+
+def draw_rotated_rect(screen, color, center, width, height, rot):
+    wvec = (math.cos(rot)*width/2, math.sin(rot)*width/2)
+    hvec = (math.cos(rot+math.pi/2)*height/2, math.sin(rot+math.pi/2)*height/2)
+    verts = [
+        (wvec[0] + hvec[0], wvec[1] + hvec[1]),
+        (wvec[0] - hvec[0], wvec[1] - hvec[1]),
+        (-wvec[0] - hvec[0], -wvec[1] - hvec[1]),
+        (-wvec[0] + hvec[0], -wvec[1] + hvec[1])
+    ]
+    pygame.draw.polygon(
+        screen,
+        color,
+        verts
+    )

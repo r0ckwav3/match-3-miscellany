@@ -174,7 +174,7 @@ while flag:
                             if (row-i, col) in hor_remove_set:
                                 to_place.append((row-i,col,currentcolor, 2))
 
-                    elif currentstreak == 4:
+                    if currentstreak == 4:
                         # TODO: spawn the powergem at the "creating gem"
                         to_place.append((row-3,col,currentcolor, 1))
                     elif currentstreak >= 5:
@@ -189,7 +189,7 @@ while flag:
                     to_remove.append((row-i,col))
                     if (row-i, col) in hor_remove_set:
                         to_place.append((row-i,col,currentcolor, 2))
-            elif currentstreak == 4:
+            if currentstreak == 4:
                 # TODO: spawn the powergem at the "creating gem"
                 to_place.append((row-3,col,currentcolor, 1))
             elif currentstreak >= 5:

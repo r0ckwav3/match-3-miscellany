@@ -45,7 +45,7 @@ gem_anim_timer = 0
 # pygame initialization/constants
 tilesize = 50
 padding = 10
-spikesize = 10
+spikesize = 6
 
 size = (boardwidth * tilesize, boardheight * tilesize)
 
@@ -274,16 +274,26 @@ while flag:
                     )
                 # bomb
                 elif board[row][col][1] == 1:
-                    pygame.draw.rect(
+                    bombpadding = spikesize + padding
+                    pygame.draw.ellipse(
                         screen,
                         color,
                         (
-                            spritecoords[0] + padding/2,
-                            spritecoords[1] + padding/2,
-                            tilesize - padding,
-                            tilesize - padding
+                            spritecoords[0] + bombpadding/2,
+                            spritecoords[1] + bombpadding/2,
+                            tilesize - bombpadding,
+                            tilesize - bombpadding
                         )
                     )
+                    for i in range(4):
+                        RegularNgon.draw_rotated_rect(
+                            screen,
+                            color,
+                            (spritecoords[0]+tilesize//2, spritecoords[1]+tilesize//2),
+                            tilesize - padding,
+                            spikesize,
+                            math.pi*i/4
+                        )
                 # cross bomb
                 elif board[row][col][1] == 2:
                     RegularNgon.draw_ngon(

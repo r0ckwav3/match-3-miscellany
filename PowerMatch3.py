@@ -38,6 +38,7 @@ is_falling = [[False for j in range(boardwidth)] for k in range(boardheight)]
 # and anything that is falling is marked in is_falling
 
 prev_selected = None
+last_moved = []
 
 gem_anim_time = 5000
 gem_anim_timer = 0
@@ -115,6 +116,7 @@ while flag:
                             temp = board[tilepos[1]][tilepos[0]]
                             board[tilepos[1]][tilepos[0]] = board[prev_selected[1]][prev_selected[0]]
                             board[prev_selected[1]][prev_selected[0]] = temp
+                            last_moved = [tilepos, prev_selected]
                             prev_selected = None
                             game_state = "PreIdle"
                         else:
@@ -140,8 +142,11 @@ while flag:
                             to_remove.append((row,col-i))
                             hor_remove_set.add((row,col-i))
                     if currentstreak == 4:
-                        # TODO: spawn the powergem at the "creating gem"
-                        to_place.append((row,col-3,currentcolor, 1))
+                        # spawn the powergem at the "creating gem"
+                        if (col-2, row) in last_moved:
+                            to_place.append((row,col-2,currentcolor, 1))
+                        else:
+                            to_place.append((row,col-3,currentcolor, 1))
                     elif currentstreak >= 5:
                         to_place.append((row,col-3,len(colors), 3))
                     # start a new one
@@ -154,8 +159,11 @@ while flag:
                     to_remove.append((row,col-i))
                     hor_remove_set.add((row,col-i))
             if currentstreak == 4:
-                # TODO: spawn the powergem at the "creating gem"
-                to_place.append((row,col-3,currentcolor, 1))
+                # spawn the powergem at the "creating gem"
+                if (col-2, row) in last_moved:
+                    to_place.append((row,col-2,currentcolor, 1))
+                else:
+                    to_place.append((row,col-3,currentcolor, 1))
             elif currentstreak >= 5:
                 to_place.append((row,col-3,len(colors), 3))
 
@@ -175,8 +183,11 @@ while flag:
                                 to_place.append((row-i,col,currentcolor, 2))
 
                     if currentstreak == 4:
-                        # TODO: spawn the powergem at the "creating gem"
-                        to_place.append((row-3,col,currentcolor, 1))
+                        # spawn the powergem at the "creating gem"
+                        if (col, row-2) in last_moved:
+                            to_place.append((row-2,col,currentcolor, 1))
+                        else:
+                            to_place.append((row-3,col,currentcolor, 1))
                     elif currentstreak >= 5:
                         to_place.append((row-3,col,len(colors), 3))
                     # start a new one
@@ -190,8 +201,11 @@ while flag:
                     if (row-i, col) in hor_remove_set:
                         to_place.append((row-i,col,currentcolor, 2))
             if currentstreak == 4:
-                # TODO: spawn the powergem at the "creating gem"
-                to_place.append((row-3,col,currentcolor, 1))
+                # spawn the powergem at the "creating gem"
+                if (col, row-2) in last_moved:
+                    to_place.append((row-2,col,currentcolor, 1))
+                else:
+                    to_place.append((row-3,col,currentcolor, 1))
             elif currentstreak >= 5:
                 to_place.append((row-3,col,len(colors), 3))
 
